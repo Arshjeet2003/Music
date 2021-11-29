@@ -3,6 +3,7 @@ package com.arsh.isangeet;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -15,7 +16,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 public class PlaySong extends AppCompatActivity {
-
+    int c=0;
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -25,13 +26,14 @@ public class PlaySong extends AppCompatActivity {
     }
 
     TextView textView;
-    ImageView play, previous, next;
+    ImageView play, previous, next, loop;
     ArrayList<File> songs;
     MediaPlayer mediaPlayer;
     String textContent;
     int position;
     SeekBar seekBar;
     Thread updateSeek;
+    int currentPosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +44,8 @@ public class PlaySong extends AppCompatActivity {
         previous = findViewById(R.id.previous);
         next = findViewById(R.id.next);
         seekBar = findViewById(R.id.seekBar);
+        loop = findViewById(R.id.loop);
+
 
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
@@ -54,7 +58,6 @@ public class PlaySong extends AppCompatActivity {
         mediaPlayer = MediaPlayer.create(this, uri);
         mediaPlayer.start();
         seekBar.setMax(mediaPlayer.getDuration());
-
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -75,7 +78,7 @@ public class PlaySong extends AppCompatActivity {
         updateSeek = new Thread(){
             @Override
             public void run() {
-                int currentPosition = 0;
+                 currentPosition = 0;
                 try{
                     while(currentPosition<mediaPlayer.getDuration()){
                         currentPosition = mediaPlayer.getCurrentPosition();
@@ -101,7 +104,12 @@ public class PlaySong extends AppCompatActivity {
                     play.setImageResource(R.drawable.pause);
                     mediaPlayer.start();
                 }
-
+                mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                    @Override
+                    public void onCompletion(MediaPlayer mp) {
+                        next.callOnClick();
+                    }
+                });
             }
         });
 
@@ -120,9 +128,17 @@ public class PlaySong extends AppCompatActivity {
                 mediaPlayer = MediaPlayer.create(getApplicationContext(), uri);
                 mediaPlayer.start();
                 play.setImageResource(R.drawable.pause);
+                seekBar.setProgress(0);
+                currentPosition = 0;
                 seekBar.setMax(mediaPlayer.getDuration());
                 textContent = songs.get(position).getName().toString();
                 textView.setText(textContent);
+                mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                    @Override
+                    public void onCompletion(MediaPlayer mp) {
+                        next.callOnClick();
+                    }
+                });
             }
         });
 
@@ -141,11 +157,40 @@ public class PlaySong extends AppCompatActivity {
                 mediaPlayer = MediaPlayer.create(getApplicationContext(), uri);
                 mediaPlayer.start();
                 play.setImageResource(R.drawable.pause);
+                seekBar.setProgress(0);
+                currentPosition = 0;
                 seekBar.setMax(mediaPlayer.getDuration());
                 textContent = songs.get(position).getName().toString();
                 textView.setText(textContent);
+                mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                    @Override
+                    public void onCompletion(MediaPlayer mp) {
+                        next.callOnClick();
+                    }
+                });
+            }
+        });
+        loop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(c==0) {
+                    mediaPlayer.setLooping(true);
+                    c++;
+                    loop.setBackgroundColor(Color.parseColor("#A561FF"));
+                }
+                else{
+                    mediaPlayer.setLooping(false);
+                    c=0;
+                    loop.setBackgroundColor(Color.parseColor("#FFFFFF"));
+                }
 
             }
         });
+        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+           @Override
+           public void onCompletion(MediaPlayer mp) {
+               next.callOnClick();
+           }
+       });
     }
 }

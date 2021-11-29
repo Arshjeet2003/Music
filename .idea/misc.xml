@@ -3,8 +3,9 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Apps/iSangeet/app/src/main/res/drawable/loop.xml" value="0.21197916666666666" />
         <entry key="..\:/Apps/iSangeet/app/src/main/res/layout/activity_main.xml" value="0.33" />
-        <entry key="..\:/Apps/iSangeet/app/src/main/res/layout/activity_play_song.xml" value="0.33" />
+        <entry key="..\:/Apps/iSangeet/app/src/main/res/layout/activity_play_song.xml" value="0.22" />
       </map>
     </option>
   </component>
